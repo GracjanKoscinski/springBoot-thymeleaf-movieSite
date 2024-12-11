@@ -1,4 +1,4 @@
-package project.movieSite.model;
+package project.moviesite.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
@@ -7,24 +7,24 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.HashSet;
-import java.util.Set;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table(name = "genres")
+@Table(name= "directors")
+@Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
-public class Genre {
-
+public class Director {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String genreName;
+    private String name;
 
-    @ManyToMany(mappedBy = "genres")
+    @OneToMany(mappedBy = "director")
     @JsonBackReference
-    private Set<Movie> movies = new HashSet<>();
+    private List<Movie> movies = new ArrayList<>();
 }
