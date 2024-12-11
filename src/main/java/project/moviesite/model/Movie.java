@@ -38,7 +38,7 @@ public class Movie {
     @ManyToOne
     @JoinColumn(name = "director_id", nullable = false)
     @JsonManagedReference
-    private com.example.demo.model.Director director;
+    private Director director;
 
     @ManyToMany
     @JoinTable(
