@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<header th:replace="~{fragments/header :: header}"></header>
+<div class="container mt-5">
+    <h2>Admin Panel - Add Movie</h2>
+
+    <div th:if="${param.success}" class="alert alert-success">
+        Film został pomyślnie dodany!
+    </div>
+
+    <form th:action="@{/admin/add-movie}" th:object="${movie}" method="post">
+        <div class="form-group">
+            <label>Tytuł</label>
+            <input type="text" class="form-control" th:field="*{title}">
+            <small class="text-danger" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></small>
+        </div>
+
+        <div class="form-group">
+            <label>Rok</label>
+            <input type="number" class="form-control" th:field="*{year}">
+            <small class="text-danger" th:if="${#fields.hasErrors('year')}" th:errors="*{year}"></small>
+        </div>
+
+        <div class="form-group">
+            <label>Czas trwania</label>
+            <input type="number" class="form-control" th:field="*{runtime}">
+            <small class="text-danger" th:if="${#fields.hasErrors('runtime')}" th:errors="*{runtime}"></small>
+        </div>
+
+        <div class="form-group">
+            <label>Opis</label>
+            <textarea class="form-control" th:field="*{plot}"></textarea>
+            <small class="text-danger" th:if="${#fields.hasErrors('plot')}" th:errors="*{plot}"></small>
+        </div>
+
+        <div class="form-group">
+            <label>URL Plakatu</label>
+            <input type="text" class="form-control" th:field="*{posterUrl}">
+            <small class="text-danger" th:if="${#fields.hasErrors('posterUrl')}" th:errors="*{posterUrl}"></small>
+        </div>
+
+        <div class="form-group">
+            <label>Reżyser</label>
+            <select class="form-control" th:field="*{director}">
+                <option th:each="director : ${directors}"
+                        th:value="${director.id}"
+                        th:text="${director.name}">
+                </option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Gatunki</label>
+            <select multiple class="form-control" th:field="*{genres}">
+                <option th:each="genre : ${genres}"
+                        th:value="${genre.id}"
+                        th:text="${genre.genreName}">
+                </option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Aktorzy</label>
+            <select multiple class="form-control" th:field="*{actors}">
+                <option th:each="actor : ${actors}"
+                        th:value="${actor.id}"
+                        th:text="${actor.name}">
+                </option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Dodaj Film</button>
+    </form>
+</div>
+</body>
+</html>

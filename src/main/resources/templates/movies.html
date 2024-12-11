@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pl">
+<head>
+    <title>Movies</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .sidebar {
+            border-right: 1px solid #ddd;
+            height: 100%;
+            padding: 20px;
+        }
+        .filter-group {
+            margin-bottom: 20px;
+        }
+        .filter-search {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+<header th:replace="~{fragments/header :: header}"></header>
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 sidebar">
+            <h4>Filters</h4>
+            <form method="get" action="/movies-view">
+                <!-- Genre Filter -->
+                <div class="filter-group">
+                    <h5>
+                        <a data-toggle="collapse" href="#genresCollapse" role="button" aria-expanded="false" aria-controls="genresCollapse">
+                            Genre
+                        </a>
+                    </h5>
+                    <div class="collapse" id="genresCollapse">
+                        <input type="text" class="form-control filter-search" placeholder="Search genre..." onkeyup="filterList('genresCollapse', this)">
+                        <div th:each="genre : ${uniqueGenres}">
+                            <input type="checkbox"
+                                   th:id="'genre_' + ${genre.genreName}"
+                                   th:name="genres"
+                                   th:value="${genre.genreName}"
+                                   th:checked="${#lists.contains(selectedGenres, genre.genreName)}">
+                            <label th:for="'genre_' + ${genre.genreName}" th:text="${genre.genreName}"></label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actor Filter -->
+                <div class="filter-group">
+                    <h5>
+                        <a data-toggle="collapse" href="#actorsCollapse" role="button" aria-expanded="false" aria-controls="actorsCollapse">
+                            Actor
+                        </a>
+                    </h5>
+                    <div class="collapse" id="actorsCollapse">
+                        <input type="text" class="form-control filter-search" placeholder="Search actor..." onkeyup="filterList('actorsCollapse', this)">
+                        <div th:each="actor : ${uniqueActors}">
+                            <input type="checkbox"
+                                   th:id="'actor_' + ${actor.name}"
+                                   th:name="actors"
+                                   th:value="${actor.name}"
+                                   th:checked="${#lists.contains(selectedActors, actor.name)}">
+                            <label th:for="'actor_' + ${actor.name}" th:text="${actor.name}"></label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Director Filter -->
+                <div class="filter-group">
+                    <h5>
+                        <a data-toggle="collapse" href="#directorsCollapse" role="button" aria-expanded="false" aria-controls="directorsCollapse">
+                            Director
+                        </a>
+                    </h5>
+                    <div class="collapse" id="directorsCollapse">
+                        <input type="text" class="form-control filter-search" placeholder="Search director..." onkeyup="filterList('directorsCollapse', this)">
+                        <div th:each="director : ${uniqueDirectors}">
+                            <input type="radio"
+                                   th:id="'director_' + ${director.name}"
+                                   name="director"
+                                   th:value="${director.name}"
+                                   th:checked="${selectedDirector == director.name}">
+                            <label th:for="'director_' + ${director.name}" th:text="${director.name}"></label>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">Apply Filters</button>
+                <a href="/movies-view" class="btn btn-secondary btn-block">Reset Filters</a>
+            </form>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9">
+            <!-- Search Bar -->
+            <form method="get" action="/movies-view" class="search-bar">
+                <div class="input-group">
+                    <input type="text" name="search" class="form-control" placeholder="Search by movie name" th:value="${searchQuery}">
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-outline-primary">Search</button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Movies Grid -->
+            <div class="row">
+                <div class="col-md-4 mb-4" th:each="movie : ${movies}">
+                    <a th:href="@{'/movie-details/' + ${movie.id}}" style="text-decoration: none; color: inherit;">
+                        <div class="card h-100">
+                            <img th:src="${movie.posterUrl}" class="card-img-top" alt="Movie poster">
+                            <div class="card-body">
+                                <h5 class="card-title" th:text="${movie.title}">Movie Title</h5>
+                                <p class="card-text"><strong>Year:</strong> <span th:text="${movie.year}"></span></p>
+                                <p class="card-text"><strong>Runtime:</strong> <span th:text="${movie.runtime}"></span> mins</p>
+                                <p class="card-text"><strong>Director:</strong> <span th:text="${movie.director.name}"></span></p>
+                                <p class="card-text"><strong>Genres:</strong>
+                                    <span th:each="genre : ${movie.genres}" th:text="${genre.genreName}" class="badge badge-secondary"></span>
+                                </p>
+                                <p class="card-text"><strong>Actors:</strong>
+                                    <span th:each="actor : ${movie.actors}" th:text="${actor.name}" class="badge badge-info"></span>
+                                </p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Function to filter items in a collapsible section
+    function filterList(sectionId, input) {
+        const filter = input.value.toLowerCase();
+        const section = document.getElementById(sectionId);
+        const items = section.querySelectorAll('div');
+
+        items.forEach(item => {
+            const label = item.querySelector('label');
+            if (label && label.textContent.toLowerCase().indexOf(filter) > -1) {
+                item.style.display = '';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    }
+</script>
+</body>
+</html>
