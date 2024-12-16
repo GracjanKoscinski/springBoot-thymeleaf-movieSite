@@ -241,13 +241,16 @@
     <!-- Formy do komentowania tylko dla zalogowanych użytkowników -->
     <div class="mt-4" th:if="${#authentication.name != 'anonymousUser'}">
         <h3>Leave a Comment</h3>
-        <form th:action="@{/comments/add}" method="post" class="comment-form">
-            <textarea name="text" class="form-control" rows="4" placeholder="Write a comment..." required></textarea>
+        <form th:action="@{/comments/add}" method="post" class="comment-form" th:object="${comment}">
+            <div th:if="${#fields.hasErrors('text')}" class="alert alert-danger" th:errors="*{text}">
+                Error message
+            </div>
+            <textarea th:field="*{text}" class="form-control" rows="4"
+                      placeholder="Write a comment..."></textarea>
             <input type="hidden" name="movieId" th:value="${movie.id}">
             <button type="submit" class="btn btn-primary mt-3">Submit Comment</button>
         </form>
     </div>
-
     <!-- Komunikat dla niezalogowanych użytkowników -->
     <div class="mt-4" th:if="${#authentication.name == 'anonymousUser'}">
         <p>Log in to submit a comment</p>
@@ -277,7 +280,6 @@
         </div>
     </div>
 </div>
-
 </body>
 </html>
 

@@ -91,6 +91,26 @@
                     </div>
                 </div>
 
+                <!-- Sorting Section -->
+                <div class="filter-group">
+                    <h5>
+                        <a data-toggle="collapse" href="#sortingCollapse" role="button" aria-expanded="false" aria-controls="sortingCollapse">
+                            Sorting
+                        </a>
+                    </h5>
+                    <div class="collapse" id="sortingCollapse">
+                        <select name="sortBy" class="form-control">
+                            <option value="">Select Sorting Option</option>
+                            <option value="year_asc" th:selected="${sortBy == 'year_asc'}">Release Year (Ascending)</option>
+                            <option value="year_desc" th:selected="${sortBy == 'year_desc'}">Release Year (Descending)</option>
+                            <option value="runtime_asc" th:selected="${sortBy == 'runtime_asc'}">Runtime (Shortest First)</option>
+                            <option value="runtime_desc" th:selected="${sortBy == 'runtime_desc'}">Runtime (Longest First)</option>
+                            <option value="rating_asc" th:selected="${sortBy == 'rating_asc'}">Average Rating (Low to High)</option>
+                            <option value="rating_desc" th:selected="${sortBy == 'rating_desc'}">Average Rating (High to Low)</option>
+                        </select>
+                    </div>
+                </div>
+
                 <button type="submit" class="btn btn-primary btn-block">Apply Filters</button>
                 <a href="/movies-view" class="btn btn-secondary btn-block">Reset Filters</a>
             </form>
@@ -119,6 +139,13 @@
                                 <p class="card-text"><strong>Year:</strong> <span th:text="${movie.year}"></span></p>
                                 <p class="card-text"><strong>Runtime:</strong> <span th:text="${movie.runtime}"></span> mins</p>
                                 <p class="card-text"><strong>Director:</strong> <span th:text="${movie.director.name}"></span></p>
+                                <p class="card-text">
+                                    <strong>Average Rating:</strong>
+                                    <span th:text="${averageRatingMap[movie.id] != null and averageRatingMap[movie.id] > 0
+                                    ? #numbers.formatDecimal(averageRatingMap[movie.id], 0, 1)
+                                    : 'Not rated yet'}">
+                                </span>
+                                </p>
                                 <p class="card-text"><strong>Genres:</strong>
                                     <span th:each="genre : ${movie.genres}" th:text="${genre.genreName}" class="badge badge-secondary"></span>
                                 </p>

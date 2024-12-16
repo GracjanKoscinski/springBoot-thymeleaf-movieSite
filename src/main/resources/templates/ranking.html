@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Ranking</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<header th:replace="~{fragments/header :: header}"></header>
+<div class="container mt-5">
+    <h2>Ranking</h2>
+
+    <h3>Top 5 Movies</h3>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Title</th>
+            <th>Average Rating</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="movie : ${topMovies}">
+            <td><a th:href="@{'/movie-details/' + ${movie.id}}" th:text="${movie.title}"></a></td>
+            <td th:text="${#numbers.formatDecimal(movieAverageRatings[movie.id], 1, 1)}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h3>Top 5 Active Users</h3>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Username</th>
+            <th>Number of Comments</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user : ${topUsers}">
+            <td th:text="${user.username}"></td>
+            <td th:text="${user.comments.size()}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
