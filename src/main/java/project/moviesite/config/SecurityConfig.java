@@ -25,10 +25,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChainWeb(HttpSecurity http, ClientRegistrationRepository clientRegistrationRepository) throws Exception {
         http
-                .securityMatcher("/movies-view/**", "/movie-details/**", "/login/**", "/oauth2/authorization/keycloak", "/logout/**", "/user-info/**", "watchlist/**", "favorites/**","/comments/**", "ignored/**", "rate-movie/**", "delete-rating/**", "/admin/**")
+                .securityMatcher("/movies-view/**", "/movie-details/**", "/login/**", "/oauth2/authorization/keycloak", "/logout/**", "/user-info/**", "watchlist/**", "favorites/**","/comments/**", "ignored/**", "rate-movie/**", "delete-rating/**", "/admin/**", "/ranking/**")
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/", "/movies-view", "/movie-details/**", "/user-info/**", "favorites/**", "ignored/**", "watchlist/**", "comments/**","/login**", "/css/**", "/js/**", "rate-movie/**", "delete-rating/**", "admin/**").permitAll()
+                                .requestMatchers("/", "/movies-view", "/movie-details/**", "/user-info/**", "favorites/**", "ignored/**", "watchlist/**", "comments/**","/login**", "/css/**", "/js/**", "rate-movie/**", "delete-rating/**", "admin/**", "/ranking/**").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
@@ -52,9 +52,9 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChainAPI(HttpSecurity http) throws Exception {
         http
-                .securityMatcher("/api/**")
+                .securityMatcher("/api/protected/**", "/api/admin/**")
                 .authorizeHttpRequests(authorizeRequests ->
-                        authorizeRequests.requestMatchers("/api/**").authenticated()
+                        authorizeRequests.requestMatchers("/api/protected/**", "/api/admin/**").authenticated()
                 )
                 .addFilterAfter(jwtSyncFilter, BearerTokenAuthenticationFilter.class) // Dodanie filtra synchronizacji
                 .oauth2ResourceServer(oauth2ResourceServer ->
@@ -75,4 +75,3 @@ public class SecurityConfig {
 
 
 }
-
