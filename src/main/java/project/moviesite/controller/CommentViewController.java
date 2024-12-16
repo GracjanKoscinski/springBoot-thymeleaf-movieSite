@@ -1,9 +1,13 @@
 package project.moviesite.controller;
 
 
+import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,23 +29,38 @@ public class CommentViewController {
         this.movieService = movieService;
         this.commentService = commentService;
     }
+
     @PostMapping("/comments/add")
-    public String addComment(@RequestParam String text, @RequestParam Long movieId, @AuthenticationPrincipal OAuth2User principal) {
+    public String addComment(@Valid @ModelAttribute("comment") Comment comment,
+                             BindingResult bindingResult,
+                             @RequestParam Long movieId,
+                             @AuthenticationPrincipal OAuth2User principal,
+                             Model model) {
         if (principal == null) {
             return "redirect:/login";
         }
 
-        String userId = principal.getAttribute("sub");
-        User user = userService.getUser(userId);
         Movie movie = movieService.getMovieById(movieId);
-        if (movie == null) {
-            return "redirect:/movies-view";
+        comment.setMovie(movie);
+
+        if (bindingResult.hasErrors()) {
+            // Dodajemy wszystkie potrzebne atrybuty do modelu
+            model.addAttribute("movie", movie);
+            // Sprawdzamy czy użytkownik jest zalogowany i dodajemy odpowiednie flagi
+            User user = userService.getUser(principal.getAttribute("sub"));
+            model.addAttribute("isInWatchlist", user.getWatchlistMovies().contains(movie));
+            model.addAttribute("isFavorite", user.getFavoriteMovies().contains(movie));
+            model.addAttribute("isIgnored", user.getIgnoredMovies().contains(movie));
+
+            return "movie-details"; // Zwracamy bezpośrednio widok zamiast przekierowania
         }
 
-        commentService.addComment(text, user, movie);
+        String userId = principal.getAttribute("sub");
+        User user = userService.getUser(userId);
+
+        commentService.addComment(comment.getText(), user, movie);
         return "redirect:/movie-details/" + movieId;
     }
-
     @PostMapping("/comments/delete/{id}")
     public String deleteComment(@PathVariable Long id, @AuthenticationPrincipal OAuth2User principal) {
         Comment comment = commentService.getCommentById(id);

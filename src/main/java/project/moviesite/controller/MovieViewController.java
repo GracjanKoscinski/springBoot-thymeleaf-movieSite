@@ -15,6 +15,7 @@ import project.moviesite.service.UserService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Controller
@@ -35,6 +36,7 @@ public class MovieViewController {
                              @RequestParam(required = false) List<String> actors,
                              @RequestParam(required = false) String director,
                              @RequestParam(required = false) String search,
+                             @RequestParam(required = false) String sortBy,
                              Model model,
                              @AuthenticationPrincipal OAuth2User principal) {
 
@@ -64,6 +66,16 @@ public class MovieViewController {
                     .collect(Collectors.toList());
         }
 
+        // Sortowanie
+        movies = movieService.sortMovies(movies, sortBy);
+
+        // Mapa średnich ocen dla każdego filmu
+        Map<Long, Double> averageRatingMap = movies.stream()
+                .collect(Collectors.toMap(
+                        Movie::getId,
+                        movie -> ratingService.getAverageRatingForMovie(movie.getId())
+                ));
+
         List<Genre> uniqueGenres = movieService.getUniqueGenres();
         List<Actor> uniqueActors = movieService.getUniqueActors();
         List<Director> uniqueDirectors = movieService.getUniqueDirectors();
@@ -72,6 +84,7 @@ public class MovieViewController {
         if (actors == null) actors = new ArrayList<>();
 
         model.addAttribute("movies", movies);
+        model.addAttribute("averageRatingMap", averageRatingMap);
         model.addAttribute("selectedGenres", genres);
         model.addAttribute("selectedActors", actors);
         model.addAttribute("selectedDirector", director);
@@ -79,10 +92,10 @@ public class MovieViewController {
         model.addAttribute("uniqueActors", uniqueActors);
         model.addAttribute("uniqueDirectors", uniqueDirectors);
         model.addAttribute("searchQuery", search);
+        model.addAttribute("sortBy", sortBy);
 
         return "movies";
     }
-
 
     @GetMapping("/movie-details/{id}")
     public String movieDetails(@PathVariable Long id, Model model, @AuthenticationPrincipal OAuth2User principal) {
@@ -104,7 +117,7 @@ public class MovieViewController {
         }
 
         double averageRating = ratingService.getAverageRatingForMovie(id);
-
+        model.addAttribute("comment", new Comment());
         model.addAttribute("movie", movie);
         model.addAttribute("isInWatchlist", isInWatchlist);
         model.addAttribute("isFavorite", isFavorite);
