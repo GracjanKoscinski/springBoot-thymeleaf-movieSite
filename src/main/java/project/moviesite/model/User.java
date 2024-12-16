@@ -50,4 +50,12 @@ public class User {
     )
     @JsonManagedReference
     private Set<Movie> ignoredMovies = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private Set<Comment> comments = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private Set<Rating> ratings = new HashSet<>();
 }
