@@ -31,4 +31,8 @@ public class CommentService {
     public Comment getCommentById(Long id) {
         return commentRepository.findById(id).orElse(null);
     }
+
+    public long countCommentsByUser(User user) {
+        return commentRepository.countByUser(user);
+    }
 }

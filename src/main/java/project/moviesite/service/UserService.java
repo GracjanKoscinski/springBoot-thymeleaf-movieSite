@@ -1,11 +1,13 @@
 package project.moviesite.service;
 
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import project.moviesite.model.Movie;
 import project.moviesite.model.User;
 import project.moviesite.repository.MovieRepository;
 import project.moviesite.repository.UserRepository;
 
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -77,5 +79,22 @@ public class UserService {
     public Set<Movie> getIgnoredMovies(String userSub) {
         User user = userRepository.findBySub(userSub);
         return user.getIgnoredMovies();
+    }
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    @Transactional
+    public boolean deleteUser(String userId, String currentUserId) {
+        if (userId.equals(currentUserId)) {
+            return false;
+        }
+
+        userRepository.deleteById(userId);
+        return true;
+    }
+
+    public User getUserBySub(String userSub) {
+        return userRepository.findBySub(userSub);
     }
 }

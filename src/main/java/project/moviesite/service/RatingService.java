@@ -5,20 +5,21 @@ import org.springframework.transaction.annotation.Transactional;
 import project.moviesite.model.Movie;
 import project.moviesite.model.Rating;
 import project.moviesite.model.User;
+import project.moviesite.repository.MovieRepository;
 import project.moviesite.repository.RatingRepository;
 
 @Service
 public class RatingService {
     private final RatingRepository ratingRepository;
     private final UserService userService;
-    private final MovieService movieService;
+    private final MovieRepository movieRepository;  // Inject repository instead
 
     public RatingService(RatingRepository ratingRepository,
                          UserService userService,
-                         MovieService movieService) {
+                         MovieRepository movieRepository) {
         this.ratingRepository = ratingRepository;
         this.userService = userService;
-        this.movieService = movieService;
+        this.movieRepository = movieRepository;
     }
 
     @Transactional
@@ -34,7 +35,8 @@ public class RatingService {
 
         // Create new rating
         User user = userService.getUser(userSub);
-        Movie movie = movieService.getMovieById(movieId);
+        Movie movie = movieRepository.findById(movieId)
+                .orElseThrow(() -> new IllegalArgumentException("Movie not found"));
 
         Rating newRating = new Rating();
         newRating.setUser(user);
