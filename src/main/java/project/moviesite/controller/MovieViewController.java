@@ -112,7 +112,7 @@ public class MovieViewController {
 
 
         if (user != null) {
-            Rating userRating = ratingService.getUserRatingForMovie(user.getSub(), id);
+            Rating userRating = ratingService.getUserRatingForMovieView(user.getSub(), id);
             model.addAttribute("userRating", userRating);
         }
 

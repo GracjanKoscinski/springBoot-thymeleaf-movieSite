@@ -1,5 +1,6 @@
 package project.moviesite.controller;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -88,12 +89,13 @@ public class AdminViewController {
 
         String currentUserId = principal.getAttribute("sub");
 
-        boolean deleted = userService.deleteUser(userId, currentUserId);
-
-        if (deleted) {
+        try {
+            userService.deleteUser(userId, currentUserId);
             return "redirect:/admin/panel?userDeleted";
-        } else {
+        } catch (IllegalArgumentException e) {
             return "redirect:/admin/panel?error=cannotDeleteSelf";
+        } catch (EntityNotFoundException e) {
+            return "redirect:/admin/panel?error=userNotFound";
         }
     }
 
@@ -125,13 +127,10 @@ public class AdminViewController {
             return ACCESS_DENIED;
         }
 
-        boolean deleted = movieService.deleteMovie(movieId);
+        movieService.deleteMovie(movieId);
 
-        if (deleted) {
-            return "redirect:/admin/panel?movieDeleted";
-        } else {
-            return "redirect:/admin/panel?error=movieNotFound";
-        }
+        return "redirect:/admin/panel?movieDeleted";
+
     }
 
 }
