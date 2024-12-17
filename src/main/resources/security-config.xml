@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="securityUrls" class="project.moviesite.config.SecurityUrls">
+        <property name="publicUrls">
+            <list>
+                <value>/</value>
+                <value>/movies-view</value>
+                <value>/movie-details/**</value>
+                <value>/user-info/**</value>
+                <value>/favorites/**</value>
+                <value>/ignored/**</value>
+                <value>/watchlist/**</value>
+                <value>/comments/**</value>
+                <value>/login**</value>
+                <value>/css/**</value>
+                <value>/js/**</value>
+                <value>/rate-movie/**</value>
+                <value>/delete-rating/**</value>
+                <value>/admin/**</value>
+                <value>/ranking/**</value>
+            </list>
+        </property>
+        <property name="securityMatcherUrls">
+            <list>
+                <value>/movies-view/**</value>
+                <value>/movie-details/**</value>
+                <value>/login/**</value>
+                <value>/oauth2/authorization/keycloak</value>
+                <value>/logout/**</value>
+                <value>/user-info/**</value>
+                <value>/watchlist/**</value>
+                <value>/favorites/**</value>
+                <value>/comments/**</value>
+                <value>/ignored/**</value>
+                <value>/rate-movie/**</value>
+                <value>/delete-rating/**</value>
+                <value>/admin/**</value>
+                <value>/ranking/**</value>
+            </list>
+        </property>
+        <property name="postLogoutRedirectUri" value="http://localhost:8080/movies-view"/>
+    </bean>
+</beans>
