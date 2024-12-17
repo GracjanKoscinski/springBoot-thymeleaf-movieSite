@@ -1,6 +1,7 @@
 package project.moviesite.service;
 
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import project.moviesite.model.Comment;
 import project.moviesite.model.Movie;
@@ -25,6 +26,9 @@ public class CommentService {
     }
 
     public void deleteComment(Long id) {
+        if (!commentRepository.existsById(id)) {
+            throw new EntityNotFoundException("Comment not found with id: " + id);
+        }
         commentRepository.deleteById(id);
     }
 

@@ -1,5 +1,6 @@
 package project.moviesite.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import project.moviesite.model.Movie;
@@ -25,47 +26,70 @@ public class UserService {
     }
 
     public void addMovieToWatchlist(String userSub, Long movieId) {
-        User user = userRepository.findBySub(userSub);
-        Movie movie = movieRepository.findById(movieId).orElseThrow();
+        User user = getUserBySub(userSub);
+        Movie movie = movieRepository.findById(movieId)
+                .orElseThrow(() -> new EntityNotFoundException("Movie not found with ID: " + movieId));
+
         user.getWatchlistMovies().add(movie);
         userRepository.save(user);
     }
 
     public void removeMovieFromWatchlist(String userSub, Long movieId) {
-        User user = userRepository.findBySub(userSub);
-        Movie movie = movieRepository.findById(movieId).orElseThrow();
+        User user = getUserBySub(userSub);
+        Movie movie = movieRepository.findById(movieId)
+                .orElseThrow(() -> new EntityNotFoundException("Movie not found with ID: " + movieId));
+
+        if (!user.getWatchlistMovies().contains(movie)) {
+            throw new EntityNotFoundException("Movie not found in user's watchlist");
+        }
+
         user.getWatchlistMovies().remove(movie);
         userRepository.save(user);
     }
 
     public void addMovieToFavorites(String userSub, Long movieId) {
-        User user = userRepository.findBySub(userSub);
-        Movie movie = movieRepository.findById(movieId).orElseThrow();
+        User user = getUserBySub(userSub);
+        Movie movie = movieRepository.findById(movieId)
+                .orElseThrow(() -> new EntityNotFoundException("Movie not found with ID: " + movieId));
+
         user.getFavoriteMovies().add(movie);
         userRepository.save(user);
     }
 
     public void removeMovieFromFavorites(String userSub, Long movieId) {
-        User user = userRepository.findBySub(userSub);
-        Movie movie = movieRepository.findById(movieId).orElseThrow();
+        User user = getUserBySub(userSub);
+        Movie movie = movieRepository.findById(movieId)
+                .orElseThrow(() -> new EntityNotFoundException("Movie not found with ID: " + movieId));
+
+        if (!user.getFavoriteMovies().contains(movie)) {
+            throw new EntityNotFoundException("Movie not found in user's favorites");
+        }
+
         user.getFavoriteMovies().remove(movie);
         userRepository.save(user);
     }
 
     public void addMovieToIgnored(String userSub, Long movieId) {
-        User user = userRepository.findBySub(userSub);
-        Movie movie = movieRepository.findById(movieId).orElseThrow();
+        User user = getUserBySub(userSub);
+        Movie movie = movieRepository.findById(movieId)
+                .orElseThrow(() -> new EntityNotFoundException("Movie not found with ID: " + movieId));
+
         user.getIgnoredMovies().add(movie);
         userRepository.save(user);
     }
 
     public void removeMovieFromIgnored(String userSub, Long movieId) {
-        User user = userRepository.findBySub(userSub);
-        Movie movie = movieRepository.findById(movieId).orElseThrow();
+        User user = getUserBySub(userSub);
+        Movie movie = movieRepository.findById(movieId)
+                .orElseThrow(() -> new EntityNotFoundException("Movie not found with ID: " + movieId));
+
+        if (!user.getIgnoredMovies().contains(movie)) {
+            throw new EntityNotFoundException("Movie not found in user's ignored list");
+        }
+
         user.getIgnoredMovies().remove(movie);
         userRepository.save(user);
     }
-
     public Set<Movie> getFavoriteMovies(String userSub) {
         User user = userRepository.findBySub(userSub);
         return user.getFavoriteMovies();
@@ -85,13 +109,14 @@ public class UserService {
     }
 
     @Transactional
-    public boolean deleteUser(String userId, String currentUserId) {
+    public void deleteUser(String userId, String currentUserId) {
         if (userId.equals(currentUserId)) {
-            return false;
+            throw new IllegalArgumentException("Cannot delete your own account");
         }
-
+        if (!userRepository.existsById(userId)) {
+            throw new EntityNotFoundException("User not found with id: " + userId);
+        }
         userRepository.deleteById(userId);
-        return true;
     }
 
     public User getUserBySub(String userSub) {

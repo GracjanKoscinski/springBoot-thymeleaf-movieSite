@@ -1,5 +1,6 @@
 package project.moviesite.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.moviesite.model.Movie;
@@ -46,8 +47,16 @@ public class RatingService {
         return ratingRepository.save(newRating);
     }
 
-    public Rating getUserRatingForMovie(String userSub, Long movieId) {
+    public Rating getUserRatingForMovieView(String userSub, Long movieId) {
         return ratingRepository.findByUserSubAndMovieId(userSub, movieId);
+    }
+
+    public Rating getUserRatingForMovie(String userSub, Long movieId) {
+        Rating rating = ratingRepository.findByUserSubAndMovieId(userSub, movieId);
+        if (rating == null) {
+            throw new EntityNotFoundException("Rating not found for user and movie combination");
+        }
+        return rating;
     }
 
     public double getAverageRatingForMovie(Long movieId) {
@@ -57,11 +66,11 @@ public class RatingService {
                 .average()
                 .orElse(0.0);
     }
-    @Transactional
     public void deleteRating(String userSub, Long movieId) {
-        Rating existingRating = ratingRepository.findByUserSubAndMovieId(userSub, movieId);
-        if (existingRating != null) {
-            ratingRepository.delete(existingRating);
+        Rating rating = ratingRepository.findByUserSubAndMovieId(userSub, movieId);
+        if (rating == null) {
+            throw new EntityNotFoundException("Rating not found for user and movie combination");
         }
+        ratingRepository.delete(rating);
     }
 }
