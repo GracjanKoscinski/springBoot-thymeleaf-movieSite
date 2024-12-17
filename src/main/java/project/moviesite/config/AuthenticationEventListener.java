@@ -1,7 +1,5 @@
 package project.moviesite.config;
 
-
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.authentication.event.InteractiveAuthenticationSuccessEvent;

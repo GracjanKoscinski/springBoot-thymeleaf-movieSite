@@ -1,15 +1,11 @@
 package project.moviesite.controller.rest;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 import project.moviesite.model.*;
-import project.moviesite.service.CommentService;
 import project.moviesite.service.MovieService;
-import project.moviesite.service.RatingService;
 import project.moviesite.service.UserService;
 
 import java.util.List;
