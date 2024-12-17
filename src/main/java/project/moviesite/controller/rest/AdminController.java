@@ -1,11 +1,15 @@
 package project.moviesite.controller.rest;
 
+import jakarta.validation.Valid;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
+import project.moviesite.dto.MovieCreateRequest;
 import project.moviesite.model.Movie;
 import project.moviesite.service.CommentService;
 import project.moviesite.service.MovieService;
@@ -15,6 +19,7 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/admin")
+@PreAuthorize("hasRole('client_admin')")
 public class AdminController {
     private final MovieService movieService;
     private final UserService userService;
@@ -28,33 +33,41 @@ public class AdminController {
         this.commentService = commentService;
     }
 
-    // Add a new movie
     @PostMapping("/movies")
-    @PreAuthorize("hasRole('client_admin')")
-    public Movie addMovie(@RequestBody Movie movie) {
-        // You might want to add validation logic here
-        return movieService.saveMovie(movie);
+    public ResponseEntity<Movie> addMovie(@Valid @RequestBody MovieCreateRequest request) {
+        Movie savedMovie = movieService.createMovie(request);
+        return ResponseEntity.ok(savedMovie);
     }
 
-    // Delete a comment (admin-only)
+    @DeleteMapping("/movies/{movieId}")
+    public ResponseEntity<Void> deleteMovie(@PathVariable Long movieId) {
+        movieService.deleteMovie(movieId);
+        return ResponseEntity.ok().build();
+    }
+
     @DeleteMapping("/comments/{commentId}")
-    @PreAuthorize("hasRole('client_admin')")
     public ResponseEntity<Void> deleteComment(@PathVariable Long commentId) {
         commentService.deleteComment(commentId);
         return ResponseEntity.ok().build();
     }
 
-    // Delete a user (admin-only)
     @DeleteMapping("/users/{userId}")
-    @PreAuthorize("hasRole('client_admin')")
-    public ResponseEntity<Void> deleteUser(@PathVariable String userId) {
-        userService.deleteUser(userId, null); // Pass null as current user since it's admin action
+    public ResponseEntity<?> deleteUser(@PathVariable String userId, Authentication authentication) {
+        String currentUserSub = authentication instanceof JwtAuthenticationToken jwtAuth ?
+                jwtAuth.getToken().getClaimAsString("sub") :
+                authentication.getName();
+
+        if (userId.equals(currentUserSub)) {
+            return ResponseEntity
+                    .badRequest()
+                    .body("Cannot delete your own account");
+        }
+
+        userService.deleteUser(userId, null);
         return ResponseEntity.ok().build();
     }
 
-    // Export movies to JSON
     @GetMapping("/export/movies")
-    @PreAuthorize("hasRole('client_admin')")
     public ResponseEntity<ByteArrayResource> exportMoviesToJson() throws IOException {
         ByteArrayResource resource = movieService.exportMoviesAsJSONResource();
 
@@ -62,13 +75,5 @@ public class AdminController {
                 .contentType(MediaType.parseMediaType("application/json"))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=movies.json")
                 .body(resource);
-    }
-
-    // Delte movie by ID
-    @DeleteMapping("/movies/{movieId}")
-    @PreAuthorize("hasRole('client_admin')")
-    public ResponseEntity<Void> deleteMovie(@PathVariable Long movieId) {
-        movieService.deleteMovie(movieId);
-        return ResponseEntity.ok().build();
     }
 }

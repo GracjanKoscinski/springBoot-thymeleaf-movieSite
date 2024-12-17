@@ -1,5 +1,6 @@
 package project.moviesite.controller.rest;
 
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -17,10 +18,10 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("/api")
-public class UserInfoController {
+public class UserProfileController {
     private final UserService userService;
 
-    public UserInfoController(UserService userService) {
+    public UserProfileController(UserService userService) {
         this.userService = userService;
     }
 
@@ -51,6 +52,7 @@ public class UserInfoController {
 
         return ResponseEntity.ok(userInfo);
     }
+
     @GetMapping("/protected/users/{sub}/info")
     @PreAuthorize("hasRole('client_admin')")
     public ResponseEntity<Map<String, Object>> getUserInfoBySub(@PathVariable String sub) {
