@@ -86,10 +86,11 @@
         User deleted sucessfully!
     </div>
     <div th:if="${param.error}" class="alert alert-danger">
-<span th:switch="${param.error}">
-    <span th:case="'cannotDeleteSelf'">You cannot delete your own account!</span>
-    <span th:case="*">Error while trying to delete account.</span>
-</span>
+    <span th:switch="${param.error}">
+        <span th:case="'cannotDeleteSelf'">You cannot delete your own account!</span>
+        <span th:case="'userNotFound'">User not found!</span>
+        <span th:case="*">Error while trying to delete account.</span>
+    </span>
     </div>
     <form th:action="@{/admin/delete-user}" method="post">
         <div class="form-group">
