@@ -1,6 +1,5 @@
 package project.moviesite.controller;
 
-
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
@@ -17,9 +16,8 @@ public class RatingViewController {
     }
 
     @PostMapping("/rate-movie")
-    public String rateMovie(@RequestParam Long movieId,
-                            @RequestParam int stars,
-                            @AuthenticationPrincipal OAuth2User principal) {
+    public String rateMovie(
+            @RequestParam Long movieId, @RequestParam int stars, @AuthenticationPrincipal OAuth2User principal) {
         if (principal == null) {
             return "redirect:/login";
         }
@@ -29,9 +27,9 @@ public class RatingViewController {
 
         return "redirect:/movie-details/" + movieId;
     }
+
     @PostMapping("/delete-rating")
-    public String deleteRating(@RequestParam Long movieId,
-                               @AuthenticationPrincipal OAuth2User principal) {
+    public String deleteRating(@RequestParam Long movieId, @AuthenticationPrincipal OAuth2User principal) {
         if (principal == null) {
             return "redirect:/login";
         }

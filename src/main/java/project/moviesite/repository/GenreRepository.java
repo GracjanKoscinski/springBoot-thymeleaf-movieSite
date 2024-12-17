@@ -5,6 +5,4 @@ import org.springframework.stereotype.Repository;
 import project.moviesite.model.Genre;
 
 @Repository
-public interface GenreRepository extends JpaRepository<Genre, Long> {
-}
-
+public interface GenreRepository extends JpaRepository<Genre, Long> {}

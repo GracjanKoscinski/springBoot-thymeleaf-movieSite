@@ -1,6 +1,5 @@
 package project.moviesite.controller;
 
-
 import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -31,11 +30,12 @@ public class CommentViewController {
     }
 
     @PostMapping("/comments/add")
-    public String addComment(@Valid @ModelAttribute("comment") Comment comment,
-                             BindingResult bindingResult,
-                             @RequestParam Long movieId,
-                             @AuthenticationPrincipal OAuth2User principal,
-                             Model model) {
+    public String addComment(
+            @Valid @ModelAttribute("comment") Comment comment,
+            BindingResult bindingResult,
+            @RequestParam Long movieId,
+            @AuthenticationPrincipal OAuth2User principal,
+            Model model) {
         if (principal == null) {
             return "redirect:/login";
         }
@@ -61,6 +61,7 @@ public class CommentViewController {
         commentService.addComment(comment.getText(), user, movie);
         return "redirect:/movie-details/" + movieId;
     }
+
     @PostMapping("/comments/delete/{id}")
     public String deleteComment(@PathVariable Long id, @AuthenticationPrincipal OAuth2User principal) {
         Comment comment = commentService.getCommentById(id);

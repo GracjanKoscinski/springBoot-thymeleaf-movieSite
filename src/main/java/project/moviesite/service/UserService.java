@@ -2,14 +2,13 @@ package project.moviesite.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import java.util.List;
+import java.util.Set;
 import org.springframework.stereotype.Service;
 import project.moviesite.model.Movie;
 import project.moviesite.model.User;
 import project.moviesite.repository.MovieRepository;
 import project.moviesite.repository.UserRepository;
-
-import java.util.List;
-import java.util.Set;
 
 @Service
 public class UserService {
@@ -27,7 +26,8 @@ public class UserService {
 
     public void addMovieToWatchlist(String userSub, Long movieId) {
         User user = getUserBySub(userSub);
-        Movie movie = movieRepository.findById(movieId)
+        Movie movie = movieRepository
+                .findById(movieId)
                 .orElseThrow(() -> new EntityNotFoundException("Movie not found with ID: " + movieId));
 
         user.getWatchlistMovies().add(movie);
@@ -36,7 +36,8 @@ public class UserService {
 
     public void removeMovieFromWatchlist(String userSub, Long movieId) {
         User user = getUserBySub(userSub);
-        Movie movie = movieRepository.findById(movieId)
+        Movie movie = movieRepository
+                .findById(movieId)
                 .orElseThrow(() -> new EntityNotFoundException("Movie not found with ID: " + movieId));
 
         if (!user.getWatchlistMovies().contains(movie)) {
@@ -49,7 +50,8 @@ public class UserService {
 
     public void addMovieToFavorites(String userSub, Long movieId) {
         User user = getUserBySub(userSub);
-        Movie movie = movieRepository.findById(movieId)
+        Movie movie = movieRepository
+                .findById(movieId)
                 .orElseThrow(() -> new EntityNotFoundException("Movie not found with ID: " + movieId));
 
         user.getFavoriteMovies().add(movie);
@@ -58,7 +60,8 @@ public class UserService {
 
     public void removeMovieFromFavorites(String userSub, Long movieId) {
         User user = getUserBySub(userSub);
-        Movie movie = movieRepository.findById(movieId)
+        Movie movie = movieRepository
+                .findById(movieId)
                 .orElseThrow(() -> new EntityNotFoundException("Movie not found with ID: " + movieId));
 
         if (!user.getFavoriteMovies().contains(movie)) {
@@ -71,7 +74,8 @@ public class UserService {
 
     public void addMovieToIgnored(String userSub, Long movieId) {
         User user = getUserBySub(userSub);
-        Movie movie = movieRepository.findById(movieId)
+        Movie movie = movieRepository
+                .findById(movieId)
                 .orElseThrow(() -> new EntityNotFoundException("Movie not found with ID: " + movieId));
 
         user.getIgnoredMovies().add(movie);
@@ -80,7 +84,8 @@ public class UserService {
 
     public void removeMovieFromIgnored(String userSub, Long movieId) {
         User user = getUserBySub(userSub);
-        Movie movie = movieRepository.findById(movieId)
+        Movie movie = movieRepository
+                .findById(movieId)
                 .orElseThrow(() -> new EntityNotFoundException("Movie not found with ID: " + movieId));
 
         if (!user.getIgnoredMovies().contains(movie)) {
@@ -90,6 +95,7 @@ public class UserService {
         user.getIgnoredMovies().remove(movie);
         userRepository.save(user);
     }
+
     public Set<Movie> getFavoriteMovies(String userSub) {
         User user = userRepository.findBySub(userSub);
         return user.getFavoriteMovies();
@@ -104,6 +110,7 @@ public class UserService {
         User user = userRepository.findBySub(userSub);
         return user.getIgnoredMovies();
     }
+
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }

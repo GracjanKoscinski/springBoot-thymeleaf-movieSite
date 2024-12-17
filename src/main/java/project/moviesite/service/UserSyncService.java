@@ -1,6 +1,5 @@
 package project.moviesite.service;
 
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import project.moviesite.model.User;

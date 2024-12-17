@@ -1,5 +1,9 @@
 package project.moviesite.service;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
@@ -8,11 +12,6 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 
 @Service
 public class KeycloakUserService extends OidcUserService {
@@ -30,9 +29,7 @@ public class KeycloakUserService extends OidcUserService {
             if (clientAccess != null) {
                 List<String> roles = (List<String>) clientAccess.get("roles");
                 if (roles != null) {
-                    roles.forEach(role ->
-                            authorities.add(new SimpleGrantedAuthority("ROLE_" + role.toUpperCase()))
-                    );
+                    roles.forEach(role -> authorities.add(new SimpleGrantedAuthority("ROLE_" + role.toUpperCase())));
                 }
             }
         }

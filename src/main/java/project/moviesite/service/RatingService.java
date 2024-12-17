@@ -13,11 +13,9 @@ import project.moviesite.repository.RatingRepository;
 public class RatingService {
     private final RatingRepository ratingRepository;
     private final UserService userService;
-    private final MovieRepository movieRepository;  // Inject repository instead
+    private final MovieRepository movieRepository; // Inject repository instead
 
-    public RatingService(RatingRepository ratingRepository,
-                         UserService userService,
-                         MovieRepository movieRepository) {
+    public RatingService(RatingRepository ratingRepository, UserService userService, MovieRepository movieRepository) {
         this.ratingRepository = ratingRepository;
         this.userService = userService;
         this.movieRepository = movieRepository;
@@ -36,8 +34,8 @@ public class RatingService {
 
         // Create new rating
         User user = userService.getUser(userSub);
-        Movie movie = movieRepository.findById(movieId)
-                .orElseThrow(() -> new IllegalArgumentException("Movie not found"));
+        Movie movie =
+                movieRepository.findById(movieId).orElseThrow(() -> new IllegalArgumentException("Movie not found"));
 
         Rating newRating = new Rating();
         newRating.setUser(user);
@@ -66,6 +64,7 @@ public class RatingService {
                 .average()
                 .orElse(0.0);
     }
+
     public void deleteRating(String userSub, Long movieId) {
         Rating rating = ratingRepository.findByUserSubAndMovieId(userSub, movieId);
         if (rating == null) {

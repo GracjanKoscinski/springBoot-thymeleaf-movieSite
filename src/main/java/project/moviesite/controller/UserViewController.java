@@ -1,13 +1,12 @@
 package project.moviesite.controller;
 
+import java.util.Set;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import project.moviesite.model.Movie;
 import project.moviesite.service.UserService;
-
-import java.util.Set;
 
 @Controller
 public class UserViewController {

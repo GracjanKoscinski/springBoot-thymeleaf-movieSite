@@ -33,7 +33,6 @@ public class Rating {
     @JsonBackReference
     private Movie movie;
 
-    @Positive(message = "Rating must be positive")
-    @Max(value = 5, message = "Rating must be less than or equal to 5")
+    @Positive(message = "Rating must be positive") @Max(value = 5, message = "Rating must be less than or equal to 5")
     private int starsRating;
 }

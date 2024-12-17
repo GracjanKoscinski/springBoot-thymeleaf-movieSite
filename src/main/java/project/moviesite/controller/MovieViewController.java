@@ -1,6 +1,9 @@
 package project.moviesite.controller;
 
-
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
@@ -12,11 +15,6 @@ import project.moviesite.model.*;
 import project.moviesite.service.MovieService;
 import project.moviesite.service.RatingService;
 import project.moviesite.service.UserService;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Controller
 public class MovieViewController {
@@ -32,13 +30,14 @@ public class MovieViewController {
     }
 
     @GetMapping("/movies-view")
-    public String showMovies(@RequestParam(required = false) List<String> genres,
-                             @RequestParam(required = false) List<String> actors,
-                             @RequestParam(required = false) String director,
-                             @RequestParam(required = false) String search,
-                             @RequestParam(required = false) String sortBy,
-                             Model model,
-                             @AuthenticationPrincipal OAuth2User principal) {
+    public String showMovies(
+            @RequestParam(required = false) List<String> genres,
+            @RequestParam(required = false) List<String> actors,
+            @RequestParam(required = false) String director,
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String sortBy,
+            Model model,
+            @AuthenticationPrincipal OAuth2User principal) {
 
         List<Movie> movies;
 
@@ -71,10 +70,8 @@ public class MovieViewController {
 
         // Mapa średnich ocen dla każdego filmu
         Map<Long, Double> averageRatingMap = movies.stream()
-                .collect(Collectors.toMap(
-                        Movie::getId,
-                        movie -> ratingService.getAverageRatingForMovie(movie.getId())
-                ));
+                .collect(
+                        Collectors.toMap(Movie::getId, movie -> ratingService.getAverageRatingForMovie(movie.getId())));
 
         List<Genre> uniqueGenres = movieService.getUniqueGenres();
         List<Actor> uniqueActors = movieService.getUniqueActors();
@@ -110,7 +107,6 @@ public class MovieViewController {
         boolean isFavorite = user != null && user.getFavoriteMovies().contains(movie);
         boolean isIgnored = user != null && user.getIgnoredMovies().contains(movie);
 
-
         if (user != null) {
             Rating userRating = ratingService.getUserRatingForMovieView(user.getSub(), id);
             model.addAttribute("userRating", userRating);
@@ -126,5 +122,4 @@ public class MovieViewController {
 
         return "movie-details";
     }
-
 }

@@ -1,16 +1,13 @@
 package project.moviesite.controller.rest;
 
-
+import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 import project.moviesite.model.*;
 import project.moviesite.service.MovieService;
 import project.moviesite.service.UserService;
-
-import java.util.List;
-import java.util.stream.Collectors;
-
 
 @RestController
 @RequestMapping("/api")
@@ -28,9 +25,9 @@ public class MovieController {
         List<Movie> movies = movieService.getMovies();
 
         if (authentication != null && authentication.isAuthenticated()) {
-            String userSub = authentication instanceof JwtAuthenticationToken jwtAuth ?
-                    jwtAuth.getToken().getClaimAsString("sub") :
-                    authentication.getName();
+            String userSub = authentication instanceof JwtAuthenticationToken jwtAuth
+                    ? jwtAuth.getToken().getClaimAsString("sub")
+                    : authentication.getName();
 
             User user = userService.getUser(userSub);
             return movies.stream()
@@ -52,9 +49,9 @@ public class MovieController {
         List<Movie> filteredMovies = movieService.getMoviesByFilters(genres, actors, director);
 
         if (authentication != null && authentication.isAuthenticated()) {
-            String userSub = authentication instanceof JwtAuthenticationToken jwtAuth ?
-                    jwtAuth.getToken().getClaimAsString("sub") :
-                    authentication.getName();
+            String userSub = authentication instanceof JwtAuthenticationToken jwtAuth
+                    ? jwtAuth.getToken().getClaimAsString("sub")
+                    : authentication.getName();
 
             User user = userService.getUser(userSub);
             filteredMovies = filteredMovies.stream()

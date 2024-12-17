@@ -1,5 +1,8 @@
 package project.moviesite.controller;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -7,10 +10,6 @@ import project.moviesite.model.Movie;
 import project.moviesite.model.User;
 import project.moviesite.service.RankingService;
 import project.moviesite.service.RatingService;
-
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Controller
 public class RankingViewController {
@@ -29,10 +28,8 @@ public class RankingViewController {
                 .collect(Collectors.toList());
 
         Map<Long, Double> movieAverageRatings = topMovies.stream()
-                .collect(Collectors.toMap(
-                        Movie::getId,
-                        movie -> ratingService.getAverageRatingForMovie(movie.getId())
-                ));
+                .collect(
+                        Collectors.toMap(Movie::getId, movie -> ratingService.getAverageRatingForMovie(movie.getId())));
 
         List<User> topUsers = rankingService.getTopUsersByComments().stream()
                 .map(u -> (User) u.get("user"))

@@ -2,6 +2,7 @@ package project.moviesite.controller;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+import java.io.IOException;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -18,8 +19,6 @@ import project.moviesite.model.Movie;
 import project.moviesite.service.MovieService;
 import project.moviesite.service.UserService;
 
-import java.io.IOException;
-
 @Controller
 @RequestMapping("/admin")
 public class AdminViewController {
@@ -27,6 +26,7 @@ public class AdminViewController {
     private final MovieService movieService;
     private final UserService userService;
     private static final String ACCESS_DENIED = "access-denied";
+
     public AdminViewController(MovieService movieService, UserService userService) {
         this.movieService = movieService;
 
@@ -40,7 +40,7 @@ public class AdminViewController {
 
     @GetMapping("/panel")
     public String adminPanel(@AuthenticationPrincipal OAuth2User principal, Model model) {
-        if(principal == null) {
+        if (principal == null) {
             return ACCESS_DENIED;
         }
         if (!isAdmin(principal)) {
@@ -59,8 +59,7 @@ public class AdminViewController {
             @Valid @ModelAttribute("movie") Movie movie,
             BindingResult bindingResult,
             @AuthenticationPrincipal OAuth2User principal,
-            Model model
-    ) {
+            Model model) {
 
         if (!isAdmin(principal)) {
             return ACCESS_DENIED;
@@ -78,10 +77,7 @@ public class AdminViewController {
     }
 
     @PostMapping("/delete-user")
-    public String deleteUser(
-            @RequestParam("userId") String userId,
-            @AuthenticationPrincipal OAuth2User principal
-    ) {
+    public String deleteUser(@RequestParam("userId") String userId, @AuthenticationPrincipal OAuth2User principal) {
         if (!isAdmin(principal)) {
             return ACCESS_DENIED;
         }
@@ -118,10 +114,7 @@ public class AdminViewController {
     }
 
     @PostMapping("/delete-movie")
-    public String deleteMovie(
-            @RequestParam("movieId") Long movieId,
-            @AuthenticationPrincipal OAuth2User principal
-    ) {
+    public String deleteMovie(@RequestParam("movieId") Long movieId, @AuthenticationPrincipal OAuth2User principal) {
         if (!isAdmin(principal)) {
             return ACCESS_DENIED;
         }
@@ -129,7 +122,5 @@ public class AdminViewController {
         movieService.deleteMovie(movieId);
 
         return "redirect:/admin/panel?movieDeleted";
-
     }
-
 }

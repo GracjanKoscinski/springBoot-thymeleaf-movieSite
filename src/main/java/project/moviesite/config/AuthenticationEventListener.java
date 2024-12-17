@@ -1,5 +1,6 @@
 package project.moviesite.config;
 
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.authentication.event.InteractiveAuthenticationSuccessEvent;
@@ -7,8 +8,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.stereotype.Component;
 import project.moviesite.service.UserSyncService;
-
-import java.util.Map;
 
 @Component
 @RequiredArgsConstructor

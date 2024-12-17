@@ -2,13 +2,12 @@ package project.moviesite.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Table(name = "genres")
@@ -27,6 +26,4 @@ public class Genre {
     @ManyToMany(mappedBy = "genres")
     @JsonBackReference
     private Set<Movie> movies = new HashSet<>();
-
-
 }

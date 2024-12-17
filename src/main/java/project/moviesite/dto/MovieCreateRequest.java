@@ -2,20 +2,17 @@ package project.moviesite.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
-import lombok.Data;
-
 import java.util.Set;
+import lombok.Data;
 
 @Data
 public class MovieCreateRequest {
     @NotBlank(message = "Title is mandatory")
     private String title;
 
-    @Positive(message = "Year must be positive")
-    private int year;
+    @Positive(message = "Year must be positive") private int year;
 
-    @Positive(message = "Runtime must be positive")
-    private int runtime;
+    @Positive(message = "Runtime must be positive") private int runtime;
 
     @NotBlank(message = "Plot is mandatory")
     private String plot;

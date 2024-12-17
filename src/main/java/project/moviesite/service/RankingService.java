@@ -1,12 +1,11 @@
 package project.moviesite.service;
 
-import org.springframework.stereotype.Service;
-import project.moviesite.model.Movie;
-import project.moviesite.model.User;
-
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.springframework.stereotype.Service;
+import project.moviesite.model.Movie;
+import project.moviesite.model.User;
 
 @Service
 public class RankingService {
@@ -19,8 +18,7 @@ public class RankingService {
             MovieService movieService,
             UserService userService,
             RatingService ratingService,
-            CommentService commentService
-    ) {
+            CommentService commentService) {
         this.movieService = movieService;
         this.userService = userService;
         this.ratingService = ratingService;
@@ -35,10 +33,9 @@ public class RankingService {
                     double avgRating = ratingService.getAverageRatingForMovie(movie.getId());
                     return Map.of(
                             "movie", movie,
-                            "avgRating", avgRating
-                    );
+                            "avgRating", avgRating);
                 })
-                .sorted((a, b) -> Double.compare((double)b.get("avgRating"), (double)a.get("avgRating")))
+                .sorted((a, b) -> Double.compare((double) b.get("avgRating"), (double) a.get("avgRating")))
                 .limit(5)
                 .collect(Collectors.toList());
     }
@@ -51,10 +48,9 @@ public class RankingService {
                     long commentCount = commentService.countCommentsByUser(user);
                     return Map.of(
                             "user", user,
-                            "commentCount", commentCount
-                    );
+                            "commentCount", commentCount);
                 })
-                .sorted((a, b) -> Long.compare((long)b.get("commentCount"), (long)a.get("commentCount")))
+                .sorted((a, b) -> Long.compare((long) b.get("commentCount"), (long) a.get("commentCount")))
                 .limit(5)
                 .collect(Collectors.toList());
     }

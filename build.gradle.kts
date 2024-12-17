@@ -1,7 +1,9 @@
+import com.diffplug.spotless.LineEnding
 plugins {
 	java
 	id("org.springframework.boot") version "3.3.5"
 	id("io.spring.dependency-management") version "1.1.6"
+	id("com.diffplug.spotless") version "6.25.0"
 }
 
 group = "project"
@@ -15,6 +17,20 @@ java {
 
 repositories {
 	mavenCentral()
+}
+
+spotless {
+	java {
+		importOrder()
+		removeUnusedImports()
+		cleanthat()
+		lineEndings = LineEnding.UNIX
+		palantirJavaFormat()
+		trimTrailingWhitespace()
+		endWithNewline()
+		indentWithSpaces()
+		formatAnnotations()
+	}
 }
 
 dependencies {

@@ -1,6 +1,7 @@
 package project.moviesite.controller.rest;
 
 import jakarta.validation.Valid;
+import java.io.IOException;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -15,8 +16,6 @@ import project.moviesite.service.CommentService;
 import project.moviesite.service.MovieService;
 import project.moviesite.service.UserService;
 
-import java.io.IOException;
-
 @RestController
 @RequestMapping("/api/admin")
 @PreAuthorize("hasRole('client_admin')")
@@ -25,9 +24,7 @@ public class AdminController {
     private final UserService userService;
     private final CommentService commentService;
 
-    public AdminController(MovieService movieService,
-                           UserService userService,
-                           CommentService commentService) {
+    public AdminController(MovieService movieService, UserService userService, CommentService commentService) {
         this.movieService = movieService;
         this.userService = userService;
         this.commentService = commentService;
@@ -53,14 +50,12 @@ public class AdminController {
 
     @DeleteMapping("/users/{userId}")
     public ResponseEntity<?> deleteUser(@PathVariable String userId, Authentication authentication) {
-        String currentUserSub = authentication instanceof JwtAuthenticationToken jwtAuth ?
-                jwtAuth.getToken().getClaimAsString("sub") :
-                authentication.getName();
+        String currentUserSub = authentication instanceof JwtAuthenticationToken jwtAuth
+                ? jwtAuth.getToken().getClaimAsString("sub")
+                : authentication.getName();
 
         if (userId.equals(currentUserSub)) {
-            return ResponseEntity
-                    .badRequest()
-                    .body("Cannot delete your own account");
+            return ResponseEntity.badRequest().body("Cannot delete your own account");
         }
 
         userService.deleteUser(userId, null);
